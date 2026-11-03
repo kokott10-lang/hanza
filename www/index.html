@@ -32,15 +32,17 @@ button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 h1{font-family:var(--f-display);font-weight:900;font-size:1.5rem;margin:0;letter-spacing:-.01em;text-wrap:balance}
 .top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .sync{font-size:.78rem;color:var(--muted)}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
-.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 8px;text-align:center;min-width:0}
-.stat b{display:block;font-family:var(--f-display);font-size:1.35rem;line-height:1.2;font-variant-numeric:tabular-nums}
-.stat span{font-size:.74rem;color:var(--muted)}
-.bar{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 4px;text-align:center;min-width:0}
+.stat b{display:block;font-family:var(--f-display);font-size:1rem;line-height:1.25;font-variant-numeric:tabular-nums}
+.stat span{display:block;font-size:.66rem;line-height:1.25;color:var(--muted)}
+.bar{height:6px;border-radius:99px;background:var(--line);overflow:hidden}
 .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s}
 .filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
 .chip{border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:5px 12px;font-size:.84rem;min-height:34px}
 .chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:600}
+.chip.icon{width:40px;padding:0;display:inline-grid;place-items:center}
+.chip.icon svg{width:20px;height:20px;display:block}
 .sep{width:1px;align-self:stretch;background:var(--line);margin:2px 2px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
 .pic{position:relative;background:var(--pic);padding:34px 16px 26px;text-align:center;min-height:170px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px}
@@ -51,8 +53,8 @@ h1{font-family:var(--f-display);font-weight:900;font-size:1.5rem;margin:0;letter
 .q{padding:14px 16px 4px;font-weight:600;display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
 .q small{font-weight:400;color:var(--muted)}
 .hintbtn{border:1px dashed var(--line);background:none;border-radius:8px;padding:4px 10px;font-size:.82rem;color:var(--muted)}
-.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;padding:10px 16px 16px}
-.choice{display:flex;align-items:center;gap:10px;text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:12px;min-height:52px;min-width:0;font-size:1rem;font-weight:500}
+.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;padding:10px 16px 16px}
+.choice{display:flex;align-items:center;gap:10px;text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 12px;min-height:48px;min-width:0;font-size:1rem;font-weight:500}
 .choice .k{flex:none;width:22px;height:22px;border-radius:6px;background:var(--pic);font-size:.75rem;display:grid;place-items:center;color:var(--muted)}
 .choice span:last-child{min-width:0;overflow-wrap:anywhere}
 .choice:hover:not(:disabled){border-color:var(--accent)}
@@ -81,24 +83,38 @@ h1{font-family:var(--f-display);font-weight:900;font-size:1.5rem;margin:0;letter
 .grid button:hover{border-color:var(--bad)}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .small{font-size:.8rem;color:var(--muted)}
+.view{display:flex;flex-direction:column;gap:16px}
+h2{font-family:var(--f-display);font-size:1.2rem;margin:0}
+.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.days{display:flex;flex-direction:column;gap:8px}
+.day{display:grid;grid-template-columns:1fr auto;gap:6px 10px;align-items:baseline;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.day .d{font-weight:600;min-width:0}
+.day .d small{font-weight:400;color:var(--muted);margin-left:8px}
+.day .n{font-size:.88rem;font-variant-numeric:tabular-nums;text-align:right}
+.meter{grid-column:1/-1;height:8px;border-radius:99px;background:var(--bad-bg);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--good)}
+.grp{display:grid;grid-template-columns:2.6rem 1fr auto;gap:10px;align-items:center;font-size:.9rem}
+.grp b{font-weight:600}
+.grp .c{font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.gm{height:8px;border-radius:99px;background:var(--line);overflow:hidden}
+.gm i{display:block;height:100%;background:var(--accent)}
+.zone{border-top:1px dashed var(--line);padding-top:16px;margin-top:8px;display:flex;flex-direction:column;gap:10px;align-items:flex-start}
+.zone p{margin:0;color:var(--muted);font-size:.86rem}
+.start{align-self:flex-start}
 @media (prefers-reduced-motion: reduce){.bar i{transition:none}}
-@media (max-width:420px){.stats{grid-template-columns:repeat(2,1fr)}}
+
 </style>
 
 <main class="app">
-  <div class="top">
-    <h1>한자 500 암기카드</h1>
-    <span class="sync" id="sync">저장: 이 기기</span>
-  </div>
-
   <section class="stats" aria-label="학습 현황">
     <div class="stat"><b id="sMastered">0</b><span>익힌 한자 / 500</span></div>
     <div class="stat"><b id="sLeft">500</b><span>남은 한자</span></div>
     <div class="stat"><b id="sWrong">0</b><span>오답 대기</span></div>
-    <div class="stat"><b id="sRate">-</b><span>누적 정답률</span></div>
+    <div class="stat"><b id="sRate">-</b><span>오늘 정답률</span></div>
   </section>
   <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="500" id="bar"><i id="barFill"></i></div>
 
+  <div id="study" class="view">
   <section class="filters" aria-label="출제 범위">
     <button class="chip" data-g="8급" aria-pressed="true">8급</button>
     <button class="chip" data-g="7급" aria-pressed="true">7급</button>
@@ -108,16 +124,19 @@ h1{font-family:var(--f-display);font-weight:900;font-size:1.5rem;margin:0;letter
     <button class="chip" id="modeAll" aria-pressed="true">전체 학습</button>
     <button class="chip" id="modeWrong" aria-pressed="false">오답만</button>
     <button class="chip" id="showPic" aria-pressed="true">도안 보기</button>
+    <button class="chip icon" id="ttsChip" aria-pressed="true" aria-label="정답 읽어주기 켜짐" title="정답 읽어주기"></button>
   </section>
 
   <section class="card" id="card" aria-live="polite"></section>
 
   <section class="tools">
     <button class="ghost" id="btnDone">익힌 한자 보기</button>
-    <button class="ghost danger" id="btnReset">처음부터 다시</button>
+    <button class="ghost" id="btnLog">학습 기록</button>
   </section>
   <div id="extra"></div>
-  <p class="small">한자를 보고 훈음을 고르는 카드이고, 그림은 훈음을 떠올리기 위한 연상 도안입니다. 외우고 나면 '도안 보기'를 꺼서 한자만으로 확인해 보세요. 맞힌 한자는 출제에서 빠지고, 틀린 한자는 몇 문제 뒤에 다시 나옵니다. 진도는 자동 저장됩니다.</p>
+  <p class="small">한자를 보고 훈음을 고르는 카드이고, 그림은 훈음을 떠올리기 위한 연상 도안입니다. 외우고 나면 '도안 보기'를 꺼서 한자만으로 확인해 보세요. 맞힌 한자는 출제에서 빠지고, 틀린 한자는 몇 문제 뒤에 다시 나옵니다. 진도는 자동 저장되고, 날짜별 기록은 '학습 기록'에서 볼 수 있어요.</p>
+  </div>
+  <section id="log" class="view" hidden></section>
 </main>
 
 <script>
@@ -126,18 +145,21 @@ var CARDS = [{"h":"校","hun":"학교","eum":"교","g":"8급","w":["학교(學�
 var GROUPS = ['8급','7급','6급','5급'];
 var byH = {}; CARDS.forEach(function(c){ byH[c.h] = c; });
 var LS_P = 'hanja5.progress.v1', LS_S = 'hanja5.settings.v1';
-var P = {m:{}, w:{}, a:0, c:0, ts:0};
-var S = {g:GROUPS.slice(), mode:'all', showPic:true};
+var P = {m:{}, w:{}, a:0, c:0, d:{}, ts:0};
+var S = {g:GROUPS.slice(), mode:'all', showPic:true, tts:true};
 var cur=null, opts=[], answered=false, retry=[], n=0, last=null, hintOn=false;
 var docRef=null, saving=false, dirty=false, saveTimer=null, resetAsk=false, doneOpen=false;
 var $ = function(id){ return document.getElementById(id); };
+var SVG_HEAD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z" fill="currentColor"/>';
+var ICON_ON=SVG_HEAD+'<path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+var ICON_OFF=SVG_HEAD+'<path d="m16 9 5 6"/><path d="m21 9-5 6"/></svg>';
 
 function lget(k){ try{ var v=localStorage.getItem(k); return v?JSON.parse(v):null; }catch(e){ return null; } }
 function lset(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
 
 function loadLocal(){
-  var p=lget(LS_P); if(p&&p.m){ P={m:p.m,w:p.w||{},a:p.a||0,c:p.c||0,ts:p.ts||0}; }
-  var s=lget(LS_S); if(s){ S.g=(s.g||GROUPS).filter(function(x){return GROUPS.indexOf(x)>=0;}); if(!S.g.length)S.g=GROUPS.slice(); S.mode=s.mode==='wrong'?'wrong':'all'; S.showPic=s.showPic!==false; }
+  var p=lget(LS_P); if(p&&p.m){ P={m:p.m,w:p.w||{},a:p.a||0,c:p.c||0,d:p.d||{},ts:p.ts||0}; }
+  var s=lget(LS_S); if(s){ S.g=(s.g||GROUPS).filter(function(x){return GROUPS.indexOf(x)>=0;}); if(!S.g.length)S.g=GROUPS.slice(); S.mode=s.mode==='wrong'?'wrong':'all'; S.showPic=s.showPic!==false; S.tts=s.tts!==false; }
 }
 function persist(){
   P.ts=Date.now(); lset(LS_P,P); lset(LS_S,S);
@@ -146,11 +168,11 @@ function persist(){
 function flushCloud(){
   if(!docRef||saving||!dirty) return;
   saving=true; dirty=false;
-  var body={m:Object.keys(P.m).join(''), w:P.w, a:P.a, c:P.c, ts:P.ts};
-  docRef.set(body).then(function(){ setSync('저장: 계정에 동기화됨'); },function(){ setSync('저장: 이 기기 (동기화 실패)'); })
+  var body={m:Object.keys(P.m).join(''), w:P.w, a:P.a, c:P.c, d:P.d, ts:P.ts};
+  docRef.set(body).then(function(){ setSync('저장: 계정에 동기화됨'); },function(){ setSync('저장: 이 브라우저 (동기화 실패)'); })
    .then(function(){ saving=false; if(dirty) flushCloud(); });
 }
-function setSync(t){ $('sync').textContent=t; }
+function setSync(t){ var e=$('sync'); if(e) e.textContent=t; }
 
 function initCloud(){
   if(!window.claude||!claude.use) return;
@@ -168,6 +190,7 @@ function initCloud(){
       String(d.m||'').split('').forEach(function(ch){ if(byH[ch]) P.m[ch]=1; });
       var w=d.w||{}; Object.keys(w).forEach(function(k){ if(byH[k]) P.w[k]=Math.max(P.w[k]||0, w[k]|0); });
       P.a=Math.max(P.a,d.a|0); P.c=Math.max(P.c,d.c|0);
+      var dd=d.d||{}; Object.keys(dd).forEach(function(k){ var x=dd[k]||{}, y=P.d[k]||{a:0,c:0,t:0}; P.d[k]={a:Math.max(y.a|0,x.a|0), c:Math.max(y.c|0,x.c|0), t:Math.max(y.t|0,x.t|0)}; });
     }
     setSync('저장: 계정에 동기화됨');
     persist(); renderStats(); if(!answered){ nextCard(); } else { renderCard(); }
@@ -195,7 +218,7 @@ function pickNext(){
 function label(c){ return c.hun+' '+c.eum; }
 function makeOpts(c){
   var seen={}; seen[label(c)]=1; var out=[c], guard=0;
-  while(out.length<4 && guard++<500){
+  while(out.length<6 && guard++<800){
     var x=CARDS[Math.floor(Math.random()*CARDS.length)];
     if(seen[label(x)]) continue; seen[label(x)]=1; out.push(x);
   }
@@ -213,7 +236,9 @@ function answer(i){
   P.a++; retry=retry.filter(function(r){return r.h!==h;});
   if(ok){ P.c++; P.m[h]=1; }
   else{ P.w[h]=(P.w[h]||0)+1; retry.push({h:h,due:n+3+Math.floor(Math.random()*3)}); }
+  var k=today(), D=P.d[k]||(P.d[k]={a:0,c:0,t:0}); D.a++; if(ok) D.c++; D.t=Object.keys(P.m).length;
   persist(); renderCard(i,ok); renderStats();
+  if(S.tts) speak(say(cur));
   var nb=$('nextBtn'); if(nb) nb.focus();
 }
 
@@ -251,7 +276,8 @@ function renderCard(pick,ok){
     rv.appendChild(el('div','verdict '+(ok?'ok':'no'), ok?'정답! 이 한자는 익힌 목록으로 이동했어요.':'아쉬워요. 몇 문제 뒤에 다시 나와요.'));
     var an=el('div','ans'); var t=el('div','t',cur.h+'  '+label(cur)); an.appendChild(t); rv.appendChild(an);
     var ws=el('div','words'); cur.w.forEach(function(w){ ws.appendChild(el('span',null,w)); }); rv.appendChild(ws);
-    var nb=el('button','primary','다음 문제'); nb.id='nextBtn'; nb.onclick=nextCard; rv.appendChild(nb);
+    var br=el('div','row'); var nb=el('button','primary','다음 문제'); nb.id='nextBtn'; nb.onclick=nextCard; br.appendChild(nb);
+    var sb=el('button','ghost','🔊 다시 듣기'); sb.onclick=function(){ speak(say(cur)); }; br.appendChild(sb); rv.appendChild(br);
     box.appendChild(rv);
   }
 }
@@ -260,7 +286,7 @@ function renderStats(){
   var m=Object.keys(P.m).length;
   var wrong=CARDS.filter(function(c){ return !P.m[c.h] && (P.w[c.h]||0)>0; }).length;
   $('sMastered').textContent=m; $('sLeft').textContent=CARDS.length-m; $('sWrong').textContent=wrong;
-  $('sRate').textContent=P.a? Math.round(P.c/P.a*100)+'%' : '-';
+  var TD=P.d[today()]; $('sRate').textContent=(TD&&TD.a)? Math.round(TD.c/TD.a*100)+'%' : '-';
   $('barFill').style.width=(m/CARDS.length*100)+'%'; $('bar').setAttribute('aria-valuenow',m);
   var cnt=0; CARDS.forEach(function(c){ if(S.g.indexOf(c.g)>=0 && !P.m[c.h]) cnt++; });
 }
@@ -268,16 +294,95 @@ function syncChips(){
   document.querySelectorAll('[data-g]').forEach(function(b){ b.setAttribute('aria-pressed', S.g.indexOf(b.dataset.g)>=0); });
   $('modeAll').setAttribute('aria-pressed', S.mode==='all'); $('modeWrong').setAttribute('aria-pressed', S.mode==='wrong');
   $('showPic').setAttribute('aria-pressed', S.showPic);
+  var tc=$('ttsChip'); tc.setAttribute('aria-pressed', S.tts); tc.setAttribute('aria-label', S.tts?'정답 읽어주기 켜짐':'정답 읽어주기 꺼짐'); tc.title=S.tts?'정답 읽어주기 켜짐':'정답 읽어주기 꺼짐';
+  tc.innerHTML = S.tts ? ICON_ON : ICON_OFF;
+}
+function say(c){ return [c.hun.split('/')[0], c.eum.split('/')[0]]; }
+var speakTok=0, speakTimer=null;
+function speak(parts){
+  try{
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    if(typeof parts==='string') parts=[parts];
+    speechSynthesis.cancel(); clearTimeout(speakTimer);
+    var tok=++speakTok, vs=speechSynthesis.getVoices?speechSynthesis.getVoices():[], voice=null;
+    for(var i=0;i<vs.length;i++){ if(/^ko/i.test(vs[i].lang)){ voice=vs[i]; break; } }
+    var k=0;
+    function next(){
+      if(tok!==speakTok||k>=parts.length) return;
+      var u=new SpeechSynthesisUtterance(parts[k++]); u.lang='ko-KR'; u.rate=0.85;
+      if(voice) u.voice=voice;
+      if(k<parts.length){
+        var go=function(){ if(go.d) return; go.d=1; speakTimer=setTimeout(next,20); };
+        u.onend=go; u.onerror=go;
+      }
+      speechSynthesis.speak(u);
+    }
+    next();
+  }catch(e){}
+}
+function stopSpeak(){ try{ speakTok++; clearTimeout(speakTimer); if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){} }
+function pad(x){ return x<10?'0'+x:''+x; }
+function ymd(dt){ return dt.getFullYear()+'-'+pad(dt.getMonth()+1)+'-'+pad(dt.getDate()); }
+function today(){ return ymd(new Date()); }
+var DOW=['일','월','화','수','목','금','토'];
+function dayLabel(k){ var p=k.split('-'), dt=new Date(+p[0],+p[1]-1,+p[2]); return (+p[1])+'월 '+(+p[2])+'일 ('+DOW[dt.getDay()]+')'; }
+function streak(){
+  var dt=new Date(); if(!P.d[ymd(dt)]) dt.setDate(dt.getDate()-1);
+  var c=0; while(P.d[ymd(dt)]){ c++; dt.setDate(dt.getDate()-1); } return c;
+}
+function renderLog(){
+  var box=$('log'); box.textContent='';
+  var back=el('button','ghost start','← 학습으로 돌아가기'); back.onclick=function(){ showView('study'); }; box.appendChild(back);
+  box.appendChild(el('h2',null,'학습 기록'));
+  var keys=Object.keys(P.d).sort().reverse();
+  var td=P.d[today()]||{a:0,c:0};
+  var sum=el('div','sum');
+  [[td.c+' / '+td.a,'오늘 정답 / 푼 문제'],[streak()+'일','연속 학습'],[keys.length+'일','학습한 날']].forEach(function(s){
+    var st=el('div','stat'); st.appendChild(el('b',null,s[0])); st.appendChild(el('span',null,s[1])); sum.appendChild(st); });
+  box.appendChild(sum);
+  var gp=el('div','panel'); gp.appendChild(el('h2',null,'급수별 한자 수'));
+  var cum=0, cumTxt=[];
+  GROUPS.forEach(function(g){
+    var tot=0, done=0; CARDS.forEach(function(c){ if(c.g===g){ tot++; if(P.m[c.h]) done++; } });
+    cum+=tot; cumTxt.push(g+' '+cum+'자');
+    var r=el('div','grp'); r.appendChild(el('b',null,g));
+    var m=el('div','gm'), f=el('i'); f.style.width=(tot?done/tot*100:0)+'%'; m.appendChild(f); r.appendChild(m);
+    r.appendChild(el('span','c',done+' / '+tot+'자')); gp.appendChild(r);
+  });
+  gp.appendChild(el('p',null,'각 급수는 새로 추가되는 한자 수입니다. 시험 범위는 아래 급수 한자를 모두 포함한 누적 수예요. '+cumTxt.join(' · ')));
+  box.appendChild(gp);
+  if(!keys.length){ var p=el('div','panel'); p.appendChild(el('p',null,'아직 기록이 없어요. 문제를 풀면 날짜별로 쌓입니다.')); box.appendChild(p); }
+  else{
+    var list=el('div','days');
+    keys.forEach(function(k){
+      var D=P.d[k], row=el('div','day');
+      var d=el('div','d',dayLabel(k)); d.appendChild(el('small',null,'익힌 한자 누계 '+(D.t||0)+'자')); row.appendChild(d);
+      row.appendChild(el('div','n','정답 '+D.c+' / '+D.a+(D.a?' ('+Math.round(D.c/D.a*100)+'%)':'')));
+      var m=el('div','meter'), f=el('i'); f.style.width=(D.a?D.c/D.a*100:0)+'%'; m.appendChild(f); row.appendChild(m);
+      list.appendChild(row);
+    });
+    box.appendChild(list);
+  }
+  var z=el('div','zone');
+  if(resetAsk){
+    z.appendChild(el('p',null,'익힌 한자, 오답 기록, 날짜별 기록이 모두 지워집니다. 되돌릴 수 없어요.'));
+    var r=el('div','row'); var y=el('button','ghost danger','모두 지우기'); var c=el('button','ghost','취소');
+    y.onclick=function(){ P={m:{},w:{},a:0,c:0,d:{},ts:0}; retry=[]; last=null; resetAsk=false; persist(); renderStats(); renderLog(); nextCard(); };
+    c.onclick=function(){ resetAsk=false; renderLog(); };
+    r.appendChild(y); r.appendChild(c); z.appendChild(r);
+  } else {
+    z.appendChild(el('p',null,'처음부터 다시 하려면 아래 버튼을 누르세요. 확인 단계가 한 번 더 나옵니다.'));
+    var rb=el('button','ghost danger','처음부터 다시'); rb.onclick=function(){ resetAsk=true; renderLog(); }; z.appendChild(rb);
+  }
+  box.appendChild(z);
+}
+function showView(v){
+  $('study').hidden=(v==='log'); $('log').hidden=(v!=='log'); resetAsk=false;
+  if(v==='log') renderLog(); else stopSpeak();
+  try{ window.scrollTo(0,0); }catch(e){}
 }
 function renderExtra(){
   var x=$('extra'); x.textContent='';
-  if(resetAsk){
-    var p=el('div','panel'); p.appendChild(el('p',null,'익힌 한자와 오답 기록, 정답률이 모두 지워집니다. 되돌릴 수 없어요.'));
-    var r=el('div','row'); var y=el('button','ghost danger','모두 지우기'); var c=el('button','ghost','취소');
-    y.onclick=function(){ P={m:{},w:{},a:0,c:0,ts:0}; retry=[]; last=null; resetAsk=false; persist(); renderExtra(); nextCard(); };
-    c.onclick=function(){ resetAsk=false; renderExtra(); };
-    r.appendChild(y); r.appendChild(c); p.appendChild(r); x.appendChild(p); return;
-  }
   if(doneOpen){
     var d=el('div','panel'); var ms=CARDS.filter(function(c){ return P.m[c.h]; });
     d.appendChild(el('p',null, ms.length? '익힌 한자 '+ms.length+'자입니다. 누르면 다시 출제 목록으로 돌아갑니다.' : '아직 익힌 한자가 없어요. 문제를 맞히면 여기에 쌓입니다.'));
@@ -295,10 +400,11 @@ $('modeAll').onclick=function(){ S.mode='all'; syncChips(); persist(); nextCard(
 $('modeWrong').onclick=function(){ S.mode='wrong'; syncChips(); persist(); nextCard(); };
 $('showPic').onclick=function(){ S.showPic=!S.showPic; syncChips(); persist(); renderCard(); };
 $('btnDone').onclick=function(){ doneOpen=!doneOpen; $('btnDone').textContent=doneOpen?'익힌 한자 닫기':'익힌 한자 보기'; renderExtra(); };
-$('btnReset').onclick=function(){ resetAsk=true; renderExtra(); };
+$('btnLog').onclick=function(){ showView('log'); };
+$('ttsChip').onclick=function(){ S.tts=!S.tts; if(!S.tts) stopSpeak(); syncChips(); persist(); };
 document.addEventListener('keydown',function(e){
   if(e.ctrlKey||e.metaKey||e.altKey) return;
-  if(!answered && cur && e.key>='1' && e.key<='4'){ answer(+e.key-1); }
+  if(!answered && cur && e.key>='1' && e.key<='6'){ answer(+e.key-1); }
 });
 
 loadLocal(); syncChips(); renderStats(); nextCard(); initCloud();
