@@ -280,7 +280,7 @@ function renderCard(pick,ok){
     var an=el('div','ans'); var t=el('div','t',cur.h+'  '+label(cur)); an.appendChild(t); rv.appendChild(an);
     var ws=el('div','words'); cur.w.forEach(function(w){ ws.appendChild(el('span',null,w)); }); rv.appendChild(ws);
     var br=el('div','row'); var nb=el('button','primary','다음 문제'); nb.id='nextBtn'; nb.onclick=nextCard; br.appendChild(nb);
-    var sb=el('button','ghost','🔊 다시 듣기'); sb.onclick=function(){ speak(say(cur)); }; br.appendChild(sb); rv.appendChild(br);
+    var sb=el('button','ghost',ttsOK()?'🔊 다시 듣기':'🔇 이 기기는 음성 읽기 미지원'); sb.onclick=function(){ speak(say(cur)); }; br.appendChild(sb); rv.appendChild(br);
     box.appendChild(rv);
   }
 }
@@ -300,26 +300,37 @@ function syncChips(){
   tc.innerHTML = S.tts ? ICON_ON : ICON_OFF;
 }
 function say(c){ return [c.hun.split('/')[0], c.eum.split('/')[0]]; }
-var speakTok=0, speakTimer=null;
+var speakTok=0, speakTimer=null, koVoice=null;
+function ttsOK(){ return !!(window.speechSynthesis&&window.SpeechSynthesisUtterance); }
+function pickVoice(){
+  try{
+    var vs=speechSynthesis.getVoices?speechSynthesis.getVoices():[]; koVoice=null;
+    for(var i=0;i<vs.length;i++){ if(/^ko([-_]|$)/i.test(vs[i].lang)){ koVoice=vs[i]; break; } }
+  }catch(e){}
+}
+try{ if(ttsOK()){ pickVoice(); if(speechSynthesis.addEventListener) speechSynthesis.addEventListener('voiceschanged',pickVoice); else speechSynthesis.onvoiceschanged=pickVoice; } }catch(e){}
 function speak(parts){
   try{
-    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    if(!ttsOK()) return;
     if(typeof parts==='string') parts=[parts];
-    speechSynthesis.cancel(); clearTimeout(speakTimer);
-    var tok=++speakTok, vs=speechSynthesis.getVoices?speechSynthesis.getVoices():[], voice=null;
-    for(var i=0;i<vs.length;i++){ if(/^ko/i.test(vs[i].lang)){ voice=vs[i]; break; } }
+    var tok=++speakTok; clearTimeout(speakTimer);
+    try{ speechSynthesis.cancel(); }catch(e){}
+    try{ speechSynthesis.resume(); }catch(e){}
+    if(!koVoice) pickVoice();
     var k=0;
     function next(){
       if(tok!==speakTok||k>=parts.length) return;
-      var u=new SpeechSynthesisUtterance(parts[k++]); u.lang='ko-KR'; u.rate=0.85;
-      if(voice) u.voice=voice;
-      if(k<parts.length){
-        var go=function(){ if(go.d) return; go.d=1; speakTimer=setTimeout(next,20); };
-        u.onend=go; u.onerror=go;
-      }
+      var txt=parts[k++], moved=false;
+      var u=new SpeechSynthesisUtterance(txt); u.lang='ko-KR'; u.rate=0.85; u.volume=1;
+      if(koVoice) u.voice=koVoice;
+      function go(){ if(moved||tok!==speakTok) return; moved=true; clearTimeout(speakTimer); speakTimer=setTimeout(next,20); }
+      u.onend=go; u.onerror=go;
       speechSynthesis.speak(u);
+      // Some Android engines never fire onend; move on after an estimated duration.
+      if(k<parts.length){ clearTimeout(speakTimer); speakTimer=setTimeout(go, 700+txt.length*450); }
     }
-    next();
+    // Android WebView/Chrome can drop a speak() issued right after cancel(); wait a beat.
+    speakTimer=setTimeout(next,60);
   }catch(e){}
 }
 function stopSpeak(){ try{ speakTok++; clearTimeout(speakTimer); if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){} }
