@@ -280,7 +280,7 @@ function renderCard(pick,ok){
     var an=el('div','ans'); var t=el('div','t',cur.h+'  '+label(cur)); an.appendChild(t); rv.appendChild(an);
     var ws=el('div','words'); cur.w.forEach(function(w){ ws.appendChild(el('span',null,w)); }); rv.appendChild(ws);
     var br=el('div','row'); var nb=el('button','primary','다음 문제'); nb.id='nextBtn'; nb.onclick=nextCard; br.appendChild(nb);
-    var sb=el('button','ghost',ttsOK()?'🔊 다시 듣기':'🔇 이 기기는 음성 읽기 미지원'); sb.onclick=function(){ speak(say(cur)); }; br.appendChild(sb); rv.appendChild(br);
+    var sb=el('button','ghost',ttsOK()?'🔊 다시 듣기':'🔇 이 기기는 음성 읽기 미지원'); sb.onclick=function(){ speak(say(cur),function(m){ sb.textContent=/unsupported|language/i.test(m)?'🔇 한국어 음성 데이터가 필요해요':'🔇 소리를 낼 수 없어요'; }); }; br.appendChild(sb); rv.appendChild(br);
     box.appendChild(rv);
   }
 }
@@ -301,19 +301,46 @@ function syncChips(){
 }
 function say(c){ return [c.hun.split('/')[0], c.eum.split('/')[0]]; }
 var speakTok=0, speakTimer=null, koVoice=null;
-function ttsOK(){ return !!(window.speechSynthesis&&window.SpeechSynthesisUtterance); }
+function nativeTTS(){
+  try{ var C=window.Capacitor;
+    if(C&&C.isNativePlatform&&C.isNativePlatform()) return (C.Plugins&&C.Plugins.TextToSpeech)||(C.registerPlugin&&C.registerPlugin('TextToSpeech'))||null;
+  }catch(e){} return null;
+}
+function webTTS(){ return !!(window.speechSynthesis&&window.SpeechSynthesisUtterance); }
+function ttsOK(){ return !!nativeTTS()||webTTS(); }
 function pickVoice(){
   try{
     var vs=speechSynthesis.getVoices?speechSynthesis.getVoices():[]; koVoice=null;
     for(var i=0;i<vs.length;i++){ if(/^ko([-_]|$)/i.test(vs[i].lang)){ koVoice=vs[i]; break; } }
   }catch(e){}
 }
-try{ if(ttsOK()){ pickVoice(); if(speechSynthesis.addEventListener) speechSynthesis.addEventListener('voiceschanged',pickVoice); else speechSynthesis.onvoiceschanged=pickVoice; } }catch(e){}
-function speak(parts){
+try{ if(webTTS()){ pickVoice(); if(speechSynthesis.addEventListener) speechSynthesis.addEventListener('voiceschanged',pickVoice); else speechSynthesis.onvoiceschanged=pickVoice; } }catch(e){}
+function speakNative(N,parts,tok,onFail){
+  var k=0;
+  function next(){
+    if(tok!==speakTok||k>=parts.length) return;
+    N.speak({text:parts[k++],lang:'ko-KR',rate:0.85,pitch:1.0,volume:1.0,category:'ambient'}).then(function(){
+      if(tok===speakTok) speakTimer=setTimeout(next,20);
+    },function(err){
+      if(tok!==speakTok) return;
+      if(webTTS()) speakWeb(parts.slice(k-1),tok); else if(onFail) onFail(String(err&&err.message||err||''));
+    });
+  }
+  try{ var st=N.stop&&N.stop(); if(st&&st.then) st.then(next,next); else next(); }catch(e){ next(); }
+}
+function speak(parts,onFail){
   try{
-    if(!ttsOK()) return;
     if(typeof parts==='string') parts=[parts];
     var tok=++speakTok; clearTimeout(speakTimer);
+    var N=nativeTTS();
+    if(N){ speakNative(N,parts,tok,onFail); return; }
+    if(!webTTS()){ if(onFail) onFail('unsupported'); return; }
+    speakWeb(parts,tok);
+  }catch(e){}
+}
+function speakWeb(parts,tok){
+  try{
+    clearTimeout(speakTimer);
     try{ speechSynthesis.cancel(); }catch(e){}
     try{ speechSynthesis.resume(); }catch(e){}
     if(!koVoice) pickVoice();
@@ -333,7 +360,7 @@ function speak(parts){
     speakTimer=setTimeout(next,60);
   }catch(e){}
 }
-function stopSpeak(){ try{ speakTok++; clearTimeout(speakTimer); if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){} }
+function stopSpeak(){ try{ speakTok++; clearTimeout(speakTimer); var N=nativeTTS(); if(N&&N.stop){ var r=N.stop(); if(r&&r.catch) r.catch(function(){}); } if(window.speechSynthesis) speechSynthesis.cancel(); }catch(e){} }
 function pad(x){ return x<10?'0'+x:''+x; }
 function ymd(dt){ return dt.getFullYear()+'-'+pad(dt.getMonth()+1)+'-'+pad(dt.getDate()); }
 function today(){ return ymd(new Date()); }

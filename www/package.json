@@ -1,0 +1,18 @@
+{
+  "name": "hanja500",
+  "version": "1.0.0",
+  "private": true,
+  "description": "한자 500 암기카드 (5급 배정한자 500자)",
+  "scripts": {
+    "sync": "cap sync android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/core": "^6.2.0",
+    "@capacitor-community/text-to-speech": "5.1.0"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^6.2.0"
+  }
+}
