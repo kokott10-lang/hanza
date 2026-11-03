@@ -45,17 +45,18 @@ h1{font-family:var(--f-display);font-weight:900;font-size:1.5rem;margin:0;letter
 .chip.icon svg{width:20px;height:20px;display:block}
 .sep{width:1px;align-self:stretch;background:var(--line);margin:2px 2px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden}
-.pic{position:relative;background:var(--pic);padding:34px 16px 26px;text-align:center;min-height:170px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px}
+.pic{position:relative;background:var(--pic);padding:26px 16px 10px;text-align:center;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px}
 .badge{position:absolute;left:12px;top:10px;font-size:.74rem;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:1px 9px;background:var(--surface)}
 .retry{position:absolute;right:12px;top:10px;font-size:.74rem;color:var(--bad);background:var(--bad-bg);border-radius:99px;padding:1px 9px}
-.emo{font-size:clamp(2rem,10vw,3rem);line-height:1.2;word-break:keep-all;overflow-wrap:anywhere;opacity:.95}
-.hint{font-family:var(--f-display);font-weight:900;font-size:clamp(4.5rem,24vw,6.5rem);line-height:1.05}
-.q{padding:14px 16px 4px;font-weight:600;display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.emo{font-size:clamp(1.6rem,8vw,2.3rem);line-height:1.2;min-height:2.8rem;display:flex;align-items:center;justify-content:center;word-break:keep-all;overflow-wrap:anywhere;opacity:.95}
+.emo.tip{font-size:.8rem;color:var(--muted);opacity:1}
+.hint{font-family:var(--f-display);font-weight:900;font-size:clamp(3.6rem,19vw,5rem);line-height:1.05;background:none;border:0;color:inherit;padding:0 12px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.q{padding:8px 16px 0;font-size:.92rem;font-weight:600;display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
 .q small{font-weight:400;color:var(--muted)}
 .hintbtn{border:1px dashed var(--line);background:none;border-radius:8px;padding:4px 10px;font-size:.82rem;color:var(--muted)}
-.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;padding:10px 16px 16px}
-.choice{display:flex;align-items:center;gap:10px;text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 12px;min-height:48px;min-width:0;font-size:1rem;font-weight:500}
-.choice .k{flex:none;width:22px;height:22px;border-radius:6px;background:var(--pic);font-size:.75rem;display:grid;place-items:center;color:var(--muted)}
+.choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:6px;padding:8px 12px 12px}
+.choice{display:flex;align-items:center;gap:8px;text-align:left;border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:6px 10px;min-height:38px;min-width:0;font-size:.88rem;font-weight:500}
+.choice .k{flex:none;width:18px;height:18px;border-radius:5px;background:var(--pic);font-size:.68rem;display:grid;place-items:center;color:var(--muted)}
 .choice span:last-child{min-width:0;overflow-wrap:anywhere}
 .choice:hover:not(:disabled){border-color:var(--accent)}
 .choice:disabled{cursor:default}
@@ -123,7 +124,6 @@ h2{font-family:var(--f-display);font-size:1.2rem;margin:0}
     <span class="sep"></span>
     <button class="chip" id="modeAll" aria-pressed="true">전체 학습</button>
     <button class="chip" id="modeWrong" aria-pressed="false">오답만</button>
-    <button class="chip" id="showPic" aria-pressed="true">도안 보기</button>
     <button class="chip icon" id="ttsChip" aria-pressed="true" aria-label="정답 읽어주기 켜짐" title="정답 읽어주기"></button>
   </section>
 
@@ -134,7 +134,7 @@ h2{font-family:var(--f-display);font-size:1.2rem;margin:0}
     <button class="ghost" id="btnLog">학습 기록</button>
   </section>
   <div id="extra"></div>
-  <p class="small">한자를 보고 훈음을 고르는 카드이고, 그림은 훈음을 떠올리기 위한 연상 도안입니다. 외우고 나면 '도안 보기'를 꺼서 한자만으로 확인해 보세요. 맞힌 한자는 출제에서 빠지고, 틀린 한자는 몇 문제 뒤에 다시 나옵니다. 진도는 자동 저장되고, 날짜별 기록은 '학습 기록'에서 볼 수 있어요.</p>
+  <p class="small">한자를 보고 훈음을 고르는 카드이고, 그림은 훈음을 떠올리기 위한 연상 도안입니다. 한자 글자를 터치하면 힌트 도안이 나타나요. 맞힌 한자는 출제에서 빠지고, 틀린 한자는 몇 문제 뒤에 다시 나옵니다. 진도는 자동 저장되고, 날짜별 기록은 '학습 기록'에서 볼 수 있어요.</p>
   </div>
   <section id="log" class="view" hidden></section>
 </main>
@@ -147,7 +147,7 @@ var byH = {}; CARDS.forEach(function(c){ byH[c.h] = c; });
 var LS_P = 'hanja5.progress.v1', LS_S = 'hanja5.settings.v1';
 var P = {m:{}, w:{}, a:0, c:0, d:{}, ts:0};
 var S = {g:GROUPS.slice(), mode:'all', showPic:true, tts:true};
-var cur=null, opts=[], answered=false, retry=[], n=0, last=null, hintOn=false;
+var hintTimer=null, cur=null, opts=[], answered=false, retry=[], n=0, last=null, hintOn=false;
 var docRef=null, saving=false, dirty=false, saveTimer=null, resetAsk=false, doneOpen=false;
 var $ = function(id){ return document.getElementById(id); };
 var SVG_HEAD='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z" fill="currentColor"/>';
@@ -226,7 +226,7 @@ function makeOpts(c){
   return out;
 }
 function nextCard(){
-  cur=pickNext(); answered=false; hintOn=false;
+  clearTimeout(hintTimer); cur=pickNext(); answered=false; hintOn=false;
   if(cur){ n++; last=cur.h; opts=makeOpts(cur); }
   renderCard(); renderStats();
 }
@@ -257,11 +257,14 @@ function renderCard(pick,ok){
   var pic=el('div','pic');
   pic.appendChild(el('span','badge',cur.g));
   if((P.w[cur.h]||0)>0) pic.appendChild(el('span','retry','틀린 적 '+P.w[cur.h]+'회'));
-  pic.appendChild(el('div','hint',cur.h));
-  if(S.showPic){ var emo=el('div','emo',cur.e); emo.setAttribute('role','img'); emo.setAttribute('aria-label','연상 도안'); pic.appendChild(emo); }
+  var hb=el('button','hint',cur.h); hb.type='button'; hb.setAttribute('aria-label','한자 '+cur.h+' (터치하면 연상 도안 보기)');
+  hb.onclick=function(){ if(answered) return; clearTimeout(hintTimer); hintOn=true; renderCard(); var c0=cur; hintTimer=setTimeout(function(){ if(cur===c0&&!answered){ hintOn=false; renderCard(); } },2000); }; pic.appendChild(hb);
+  var showEmo=hintOn||answered, emo;
+  if(showEmo){ emo=el('div','emo',cur.e); emo.setAttribute('role','img'); emo.setAttribute('aria-label','연상 도안'); }
+  else emo=el('div','emo tip','글자를 터치하면 힌트 도안');
+  pic.appendChild(emo);
   box.appendChild(pic);
   var q=el('div','q'); q.appendChild(el('span',null,'이 한자의 훈음은?'));
-  if(S.showPic) q.appendChild(el('small',null,'그림은 연상 힌트예요'));
   box.appendChild(q);
   var ch=el('div','choices');
   opts.forEach(function(o,i){
@@ -293,8 +296,7 @@ function renderStats(){
 function syncChips(){
   document.querySelectorAll('[data-g]').forEach(function(b){ b.setAttribute('aria-pressed', S.g.indexOf(b.dataset.g)>=0); });
   $('modeAll').setAttribute('aria-pressed', S.mode==='all'); $('modeWrong').setAttribute('aria-pressed', S.mode==='wrong');
-  $('showPic').setAttribute('aria-pressed', S.showPic);
-  var tc=$('ttsChip'); tc.setAttribute('aria-pressed', S.tts); tc.setAttribute('aria-label', S.tts?'정답 읽어주기 켜짐':'정답 읽어주기 꺼짐'); tc.title=S.tts?'정답 읽어주기 켜짐':'정답 읽어주기 꺼짐';
+    var tc=$('ttsChip'); tc.setAttribute('aria-pressed', S.tts); tc.setAttribute('aria-label', S.tts?'정답 읽어주기 켜짐':'정답 읽어주기 꺼짐'); tc.title=S.tts?'정답 읽어주기 켜짐':'정답 읽어주기 꺼짐';
   tc.innerHTML = S.tts ? ICON_ON : ICON_OFF;
 }
 function say(c){ return [c.hun.split('/')[0], c.eum.split('/')[0]]; }
@@ -398,7 +400,6 @@ document.querySelectorAll('[data-g]').forEach(function(b){
 });
 $('modeAll').onclick=function(){ S.mode='all'; syncChips(); persist(); nextCard(); };
 $('modeWrong').onclick=function(){ S.mode='wrong'; syncChips(); persist(); nextCard(); };
-$('showPic').onclick=function(){ S.showPic=!S.showPic; syncChips(); persist(); renderCard(); };
 $('btnDone').onclick=function(){ doneOpen=!doneOpen; $('btnDone').textContent=doneOpen?'익힌 한자 닫기':'익힌 한자 보기'; renderExtra(); };
 $('btnLog').onclick=function(){ showView('log'); };
 $('ttsChip').onclick=function(){ S.tts=!S.tts; if(!S.tts) stopSpeak(); syncChips(); persist(); };
