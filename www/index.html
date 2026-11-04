@@ -154,8 +154,14 @@ h2{font-family:var(--f-display);font-size:1.3rem;margin:0;font-weight:800;letter
 .lcard{position:relative;background:var(--surface);border:1.5px solid var(--edge);border-radius:22px;box-shadow:0 2px 0 var(--edge);overflow:hidden;cursor:pointer;user-select:none;-webkit-tap-highlight-color:transparent;text-align:center;padding:18px 14px 12px;display:flex;flex-direction:column;align-items:center}
 .lcard .badge{position:absolute;left:12px;top:12px}
 .lhan{width:clamp(136px,40vw,160px);font-size:clamp(4rem,21vw,4.9rem);margin-bottom:5px}
-.lrev{min-height:150px;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;visibility:hidden}
-.lrev.on{visibility:visible}
+.lrev{min-height:150px;width:100%;display:grid;place-items:center}
+.lrev>*{grid-area:1/1}
+.linfo{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;visibility:hidden;width:100%}
+.lrev.on .linfo{visibility:visible}
+.ltip{font-family:var(--f-display);font-weight:700;font-size:1.05rem;color:var(--muted);text-align:center;line-height:1.5}
+.lrev.on .ltip{display:none}
+.wait{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:.88rem;color:var(--muted);font-weight:700}
+.wait .chip{padding:2px 12px;min-height:32px;font-size:.85rem}
 .lhun{font-family:var(--f-display);font-size:2rem;line-height:1.25;font-weight:800;letter-spacing:-.01em}
 .lemo{font-size:2.2rem;line-height:1.2}
 .ctrl{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
@@ -212,7 +218,7 @@ var GROUPS = ['8급','7급','6급','5급'];
 var byH = {}; CARDS.forEach(function(c){ byH[c.h] = c; });
 var LS_P = 'hanja5.progress.v1', LS_S = 'hanja5.settings.v1';
 var P = {m:{}, w:{}, a:0, c:0, d:{}, ts:0};
-var S = {g:GROUPS.slice(), mode:'all', showPic:true, tts:true, lmode:'auto', lset:0};
+var S = {g:GROUPS.slice(), mode:'all', showPic:true, tts:true, lmode:'auto', lset:0, lwait:1};
 var hintTimer=null, cur=null, opts=[], answered=false, retry=[], n=0, last=null, hintOn=false;
 var docRef=null, saving=false, dirty=false, saveTimer=null, resetAsk=false, doneOpen=false;
 var $ = function(id){ return document.getElementById(id); };
@@ -225,7 +231,7 @@ function lset(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){}
 
 function loadLocal(){
   var p=lget(LS_P); if(p&&p.m){ P={m:p.m,w:p.w||{},a:p.a||0,c:p.c||0,d:p.d||{},ts:p.ts||0}; }
-  var s=lget(LS_S); if(s){ S.g=(s.g||GROUPS).filter(function(x){return GROUPS.indexOf(x)>=0;}); if(!S.g.length)S.g=GROUPS.slice(); S.mode=s.mode==='wrong'?'wrong':'all'; S.showPic=s.showPic!==false; S.tts=s.tts!==false; S.lmode=s.lmode==='touch'?'touch':'auto'; S.lset=Math.max(0,Math.min(9,(s.lset|0))); }
+  var s=lget(LS_S); if(s){ S.g=(s.g||GROUPS).filter(function(x){return GROUPS.indexOf(x)>=0;}); if(!S.g.length)S.g=GROUPS.slice(); S.mode=s.mode==='wrong'?'wrong':'all'; S.showPic=s.showPic!==false; S.tts=s.tts!==false; S.lmode=s.lmode==='touch'?'touch':'auto'; S.lset=Math.max(0,Math.min(9,(s.lset|0))); S.lwait=[1,2,3,5].indexOf(+s.lwait)>=0?+s.lwait:1; }
 }
 function persist(){
   P.ts=Date.now(); lset(LS_P,P); lset(LS_S,S);
@@ -549,20 +555,23 @@ function renderLearnPlay(){
   var row=el('div','filters');
   var ca=el('button','chip','자동 넘김'), ct=el('button','chip','터치로 넘김'), sp=el('button','chip','🔊 다시 듣기'), tt=el('button','chip icon');
   row.appendChild(ca); row.appendChild(ct); row.appendChild(sp); row.appendChild(tt); box.appendChild(row);
-  box.appendChild(el('p','small','한자를 보여 주고 1초 뒤 훈음과 음성이 나와요. 카드를 터치하면 바로 다음으로 넘어가요.'));
-  L.ui={cnt:cnt,lbi:lbi,card:card,bm:bm,ca:ca,ct:ct,tt:tt};
+  var wt=el('div','wait'); wt.appendChild(el('span',null,'생각할 시간'));
+  var wchips=[1,2,3,5].map(function(n){ var b=el('button','chip',n+'초'); b.onclick=function(){ S.lwait=n; persist(); if(L.phase===0&&S.lmode==='auto'&&!L.paused){ clearTimeout(L.t1); L.t1=setTimeout(learnReveal,n*1000); } learnChips(); }; wt.appendChild(b); return b; });
+  box.appendChild(wt);
+  box.appendChild(el('p','small','자동 넘김은 한자를 보여 주고 정해진 시간이 지나면 훈음과 음성이 나와요. 터치로 넘김은 카드를 한 번 터치하면 훈음, 한 번 더 터치하면 다음 글자로 가요.'));
+  L.ui={cnt:cnt,lbi:lbi,card:card,bm:bm,ca:ca,ct:ct,tt:tt,wt:wt,wchips:wchips};
   bp.onclick=function(){ learnPrev(); }; bn.onclick=function(){ learnNext(); };
   card.onclick=function(){ if(L.phase===0){ clearTimeout(L.t1); learnReveal(); } else learnNext(); };
   bm.onclick=function(){
     if(S.lmode!=='auto') return;
     L.paused=!L.paused;
     if(L.paused){ learnClear(); stopSpeak(); }
-    else if(L.phase===0){ L.t1=setTimeout(learnReveal,400); }
+    else if(L.phase===0){ L.t1=setTimeout(learnReveal,S.lwait*1000); }
     else { learnSched(900); }
     learnChips();
   };
-  ca.onclick=function(){ S.lmode='auto'; persist(); L.paused=false; if(L.phase===1) learnSched(1500); learnChips(); };
-  ct.onclick=function(){ S.lmode='touch'; persist(); clearTimeout(L.t2); clearTimeout(L.t3); L.sched=false; learnChips(); };
+  ca.onclick=function(){ S.lmode='auto'; persist(); L.paused=false; if(L.phase===1) learnSched(1500); else { clearTimeout(L.t1); L.t1=setTimeout(learnReveal,S.lwait*1000); } learnPaint(); };
+  ct.onclick=function(){ S.lmode='touch'; persist(); L.paused=false; clearTimeout(L.t1); clearTimeout(L.t2); clearTimeout(L.t3); L.sched=false; learnPaint(); };
   sp.onclick=function(){ var c=setCards(L.set)[L.idx]; if(c&&L.phase===1){ learnClear(); var ct=L.ct; speak(say(c),null,function(){ if(ct===L.ct) learnSched(1500); }); } };
   tt.onclick=function(){ S.tts=!S.tts; if(!S.tts) stopSpeak(); syncChips(); persist(); learnChips(); };
   learnGo(L.idx||0);
@@ -571,6 +580,7 @@ function learnChips(){
   var u=L.ui; if(!u) return;
   u.ca.setAttribute('aria-pressed',S.lmode==='auto'); u.ct.setAttribute('aria-pressed',S.lmode==='touch');
   u.bm.textContent=L.paused?'▶ 계속':'⏸ 멈춤'; u.bm.disabled=(S.lmode!=='auto'); u.bm.style.opacity=u.bm.disabled?.45:1;
+  u.wt.hidden=(S.lmode!=='auto'); u.wchips.forEach(function(b,i){ b.setAttribute('aria-pressed',[1,2,3,5][i]===S.lwait); });
   u.tt.innerHTML=S.tts?ICON_ON:ICON_OFF; u.tt.setAttribute('aria-pressed',S.tts); u.tt.setAttribute('aria-label',S.tts?'음성 켜짐':'음성 꺼짐');
 }
 function learnPaint(){
@@ -580,9 +590,13 @@ function learnPaint(){
   card.appendChild(el('span','badge',c.g));
   card.appendChild(el('div','lhan',c.h));
   var rv=el('div','lrev'+(L.phase===1?' on':''));
-  rv.appendChild(el('div','lhun',c.hun+' '+c.eum));
-  var em=el('div','lemo',c.e); em.setAttribute('role','img'); em.setAttribute('aria-label','연상 도안'); rv.appendChild(em);
-  var ws=el('div','words'); c.w.forEach(function(w){ ws.appendChild(el('span',null,w)); }); rv.appendChild(ws);
+  rv.appendChild(el('div','ltip',S.lmode==='touch'?'뭐라고 읽을까요? 🤔\n카드를 한 번 터치하면 훈음이 나와요':'뭐라고 읽을까요? 🤔'));
+  rv.firstChild.style.whiteSpace='pre-line';
+  var inf=el('div','linfo');
+  inf.appendChild(el('div','lhun',c.hun+' '+c.eum));
+  var em=el('div','lemo',c.e); em.setAttribute('role','img'); em.setAttribute('aria-label','연상 도안'); inf.appendChild(em);
+  var ws=el('div','words'); c.w.forEach(function(w){ ws.appendChild(el('span',null,w)); }); inf.appendChild(ws);
+  rv.appendChild(inf);
   card.appendChild(rv); learnChips();
 }
 function learnSched(ms){
@@ -594,7 +608,7 @@ function learnGo(i){
   var cs=setCards(L.set);
   if(i>=cs.length){ learnDone(); return; }
   L.idx=Math.max(0,i); L.phase=0; learnPaint();
-  if(!(S.lmode==='auto'&&L.paused)) L.t1=setTimeout(learnReveal,1000);
+  if(S.lmode==='auto'&&!L.paused) L.t1=setTimeout(learnReveal,S.lwait*1000);
 }
 function learnReveal(){
   if(L.phase!==0||!L.ui) return;
