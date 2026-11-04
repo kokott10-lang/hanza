@@ -2,7 +2,7 @@
   "appId": "com.hanja500.app",
   "appName": "한자 500",
   "webDir": "www",
-  "backgroundColor": "#edf1ec",
+  "backgroundColor": "#DFF3FF",
   "android": {
     "allowMixedContent": false
   }
